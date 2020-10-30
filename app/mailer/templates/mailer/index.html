@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Greetings Cards Spammers</title>
+    <style>
+      .green:hover {
+        background-color: green;
+      }
+      .orange:hover {
+        background-color: orange;
+      }
+      .yellow:hover {
+        background-color: yellow;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="width: 1020px; margin: 0 auto; border: 1px solid blue">
+      <table width="1020">
+        {% if is_paginated %}
+        <tr>
+          <td>
+            {% if page_obj.has_previous %}
+            <a
+              href="?page= {{ page_obj.previous_page_number }}"
+              class="pager-prev {% if not page_obj.has_previous %} inactive {% endif %}"
+              >&laquo;</a
+            >
+            {% endif %}
+          </td>
+          <td></td>
+          <td></td>
+          <td>
+            {% if page_obj.has_next %}
+            <a
+              href="?page= {{ page_obj.next_page_number }}"
+              class="pager-next {% if not page_obj.has_next %} inactive {% endif %}"
+              >&raquo;</a
+            >
+            {% endif %}
+          </td>
+        </tr>
+        {% endif %}
+        <tr>
+          <th>Name</th>
+          <th>Order Count</th>
+          <th>Order Sum</th>
+          <th>Select</th>
+        </tr>
+        {% for company in company_list %}
+        <tr
+          class="{% if company.get_order_sum > 50000 %}green{% else %}orange{% endif %}"
+        >
+          <td>{{ company.name }}</td>
+          <td>{{ company.get_order_count }}</td>
+          <td>{{ company.get_order_sum|floatformat:2 }}</td>
+          <td><input type="checkbox" name="select {{company.pk}}" id="" /></td>
+        </tr>
+        {% for contact in company.contacts.all %}
+        <tr class="{% if contact.get_order_sum > 50000 %}yellow{% endif %}">
+          <td>&nbsp;</td>
+          <td>{{ contact.first_name }} {{ contact.last_name }}</td>
+          <td>Orders: {{ contact.get_order_count }}</td>
+          <td></td>
+        </tr>
+        {% endfor %} {% endfor %}
+      </table>
+    </div>
+  </body>
+</html>
